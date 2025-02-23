@@ -1,0 +1,60 @@
+html_code = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potato Leaf Disease Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        img {
+            max-width: 300px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload a Potato Leaf Image</h2>
+    
+    <input type="file" id="fileInput">
+    <button onclick="uploadImage()">Predict</button>
+
+    <p id="result"></p>
+    <img id="preview" src="" style="display: none;">
+
+    <script>
+        function uploadImage() {
+            let fileInput = document.getElementById("fileInput").files[0];
+            let formData = new FormData();
+            formData.append("file", fileInput);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = 
+                    `Prediction: ${data.prediction} (Confidence: ${data.confidence}%)`;
+                
+                let previewImg = document.getElementById("preview");
+                previewImg.src = data.image_url;
+                previewImg.style.display = "block";
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Save HTML file inside templates folder
+os.makedirs("templates", exist_ok=True)
+with open("templates/index.html", "w") as f:
+    f.write(html_code)
+
+print("✅ index.html has been created!")
